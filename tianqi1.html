@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-type" content="text/html; charset=gb2312">
+<title>天气预报</title>
+<style>				
+	body, p{ padding:0; margin:0;}
+	.pt{ text-indent:-9999px; overflow:hidden;}
+	.wth-sty-info-detail{ font:12px/20px '宋体'; text-align:center; height:20px; vertical-align:middle;    }
+	.wth-sty-loc{ color:#ED1C24; }
+	.wth-sty-lev{ display:inline-block; height:20px;  vertical-align:middle; overflow:hidden; position:relative; top:-5px; margin:0 5px;}
+	.wth-sty-more{ margin-left:10px; color:#333; cursor:pointer; text-decoration:none;}	
+	.wth-text{ margin:0 10px;}  
+</style>
+</head>
+<body>
+	<div id="wthContainer">
+		<p class="wth-sty-info-detail sina-wth-module"><a href="//php.weather.sina.com.cn/search.php?c=1&amp;city=%E8%8D%86%E5%B7%9E&amp;dpc=1" target="_blank" class="wth-sty-more wth-sty-city-link"><span class="wth-sty-loc">荆州</span><span class="wth-text">阴</span><span class="wth-sty-temp">24℃</span></a><a class="wth-sty-more" href="http://weather.news.sina.com.cn/" target="_blank">更多</a></p>
+	</div>
+	<script src="http://i0.sinaimg.cn/dy/js/jquery/jquery-1.7.2.min.js"></script>
+	<script>	
+	var cit = RQ('city');	
+	sinaWeatherGenegator(cit); 	
+
+	function sinaWeatherGenegator(city){  
+		var sinaWeatherCity =city;					
+		var url = '//platform.sina.com.cn/weather/forecast?app_key=1315597423&city='+ 
+				encodeURIComponent(sinaWeatherCity) +'&startday=0&lenday=1&format=json&auth_type=uuid&auth_value=0123456789012345&callback=?';
+		$.getJSON(url, function(wthBlock){
+			var city= wthBlock.data.city[0].info.name;
+
+			var dayWth = wthBlock.data.city[0].days.day[0].s1;
+			var dayTemp = wthBlock.data.city[0].days.day[0].t1;						
+			var nightWth = wthBlock.data.city[0].days.day[0].s2;
+			var nightTemp = wthBlock.data.city[0].days.day[0].t2;
+
+			var wth = dayWth;
+			var tmp = dayTemp;	
+
+			if(new Date().getHours() > 11)
+			{
+				wth = nightWth;
+				tmp = nightTemp;
+			}
+			$("#wthContainer .wth-sty-loc").text(city).next().text(wth).next().text(tmp);		
+			$("#wthContainer .wth-sty-city-link").attr("href", "//php.weather.sina.com.cn/search.php?c=1&city=" + encodeURIComponent(city) + "&dpc=1");			
+
+			});					
+	}
+
+	function RQ(pVar,pURL)
+	{
+		pURL   =   window.location.href;
+		try{
+			pURL=decodeURIComponent(pURL)
+		}catch(e){
+		}
+		var vars =pURL.split("?");
+		if(vars.length==1){
+			return   " ";
+		}
+		var   varsList=vars[1].split("&");
+		var   equalString;
+		for(var i=0;equalString=varsList[i];i++){
+			var equalArray=equalString.split("=");                
+			if(equalArray[0]==pVar)
+					return equalArray[1]  ;
+		  }
+	}
+	</script>	
+
+
+</body></html>
